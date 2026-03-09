@@ -10,7 +10,6 @@ export default function DamageReport() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<number | null>(null);
 
-  // State for the damage quantity input per item
   const [damageCounts, setDamageCounts] = useState<Record<number, number>>({});
 
   const fetchArrivals = async () => {
@@ -42,8 +41,6 @@ export default function DamageReport() {
       toast.success(
         qty === maxQty ? "Item marked as damaged" : "Item split successfully",
       );
-
-      // Clear input and refresh
       setDamageCounts((prev) => ({ ...prev, [itemId]: 0 }));
       fetchArrivals();
     } catch (err) {
@@ -55,37 +52,40 @@ export default function DamageReport() {
 
   if (loading)
     return (
-      <div className="p-20 flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-orange-100 border-t-orange-500 rounded-full animate-spin" />
-        <p className="text-gray-400 font-bold text-xs uppercase tracking-widest animate-pulse">
-          Scanning for arrivals...
-        </p>
+      <div className="p-10 sm:p-20 text-center animate-pulse text-gray-900/20 font-black/20 uppercase tracking-[0.4em] text-lg sm:text-2xl">
+        SCANNING ARRIVALS
       </div>
     );
 
   return (
-    <div className="max-w-6xl mx-auto p-8 bg-white min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 sm:p-8 bg-white min-h-screen relative">
       <Toaster
         position="top-right"
         toastOptions={{
           className:
-            "text-sm font-semibold shadow-xl rounded-2xl border border-orange-50 bg-white text-gray-900",
+            "text-[10px] font-black/20 uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-gray-900 bg-white text-gray-900",
         }}
       />
 
+      {/* Decorative background text using requested opacity style */}
+      <div className="absolute top-0 right-4 text-7xl sm:text-9xl font-black/20 text-black/5 -z-10 select-none pointer-events-none uppercase">
+        REPORT
+      </div>
+
       {/* Page Header */}
-      <div className="mb-12 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div className="mb-10 sm:mb-16 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-orange-500 text-white flex items-center justify-center rounded-2xl shadow-lg shadow-orange-200 shrink-0">
+          {/* Sharp Brutalist Icon */}
+          <div className="w-14 h-14 bg-orange-500 text-white flex items-center justify-center border-b-4 border-r-4 border-gray-900 shrink-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-7 h-7"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth="3"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
             >
               <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               <line x1="12" y1="9" x2="12" y2="13" />
@@ -93,104 +93,88 @@ export default function DamageReport() {
             </svg>
           </div>
           <div>
-            <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-0.5">
+            <p className="text-[10px] font-black/20 text-orange-600 uppercase tracking-[0.2em] mb-1">
               Arrival Inspection
             </p>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase leading-none">
+            <h2 className="text-3xl sm:text-5xl font-black/20 text-gray-900 tracking-tighter uppercase leading-none">
               Damage Reporting
             </h2>
-            <p className="text-gray-400 text-sm mt-1.5 font-medium">
-              Identify damaged items upon arrival to trigger replacements or repairs.
+            <p className="text-gray-400 text-xs sm:text-sm mt-2 font-bold uppercase tracking-tight">
+              Identify damaged items to trigger replacements.
             </p>
           </div>
         </div>
-        <div className="bg-gray-950 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 self-start sm:self-auto shrink-0">
-          <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-          <span className="text-xs font-bold tracking-tight">
-            {requests.length} basket{requests.length !== 1 ? "s" : ""} to inspect
+        <div className="bg-gray-900 text-white px-5 py-3 border-2 border-gray-900 flex items-center gap-3 self-start sm:self-auto shrink-0">
+          <div className="w-2 h-2 bg-orange-500 animate-pulse" />
+          <span className="text-[10px] font-black/20 uppercase tracking-widest">
+            {requests.length} Active Baskets
           </span>
         </div>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-12 sm:space-y-20">
         {requests.length === 0 ? (
-          <div className="text-center py-28 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <div className="w-16 h-16 bg-green-100 text-green-500 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            </div>
-            <p className="text-gray-800 font-black text-lg uppercase tracking-tight">
-              No Damage to Report
-            </p>
-            <p className="text-gray-400 text-sm mt-1 font-medium italic">
-              All items in current arrivals are reported as Good.
+          <div className="text-center py-24 sm:py-32 bg-gray-50 border-4 border-dashed border-gray-200">
+            <p className="text-gray-900/20 font-black/20 text-xl sm:text-3xl uppercase tracking-widest px-4">
+              NO DAMAGE TO REPORT
             </p>
           </div>
         ) : (
           requests.map((basket) => (
             <div
               key={basket.id}
-              className="bg-white rounded-3xl border-2 border-gray-200 shadow-xl shadow-gray-100/80 overflow-hidden"
+              className="bg-white border-4 border-gray-900 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] sm:shadow-[20px_20px_0px_0px_#f3f4f6] overflow-hidden"
             >
               {/* Card Header */}
-              <div className="bg-gray-950 px-8 py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-white">
+              <div className="bg-gray-900 px-6 sm:px-10 py-6 sm:py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 text-white relative">
                 <div>
-                  <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest mb-1">
-                    Arrival Inspection Active
+                  <p className="text-[9px] font-black/20 text-orange-500 uppercase tracking-widest mb-1">
+                    Inspection Batch
                   </p>
-                  <h3 className="text-xl font-black tracking-tight">{basket.title}</h3>
+                  <h3 className="text-xl sm:text-3xl font-black/20 uppercase tracking-tight">
+                    {basket.title}
+                  </h3>
                 </div>
-                <span className="bg-white/10 border border-white/10 px-4 py-1.5 rounded-xl text-[11px] font-black tracking-widest uppercase shrink-0">
+                {/* Visual Label with requested opacity */}
+                <span className="text-[10px] font-black/20 text-white/20 border-2 border-white/20 px-4 py-2 uppercase tracking-widest">
                   Bundle #{basket.id}
                 </span>
               </div>
 
-              <div className="p-8">
-                {/* Good items (actionable) */}
-                <div className="space-y-3 mb-6">
+              <div className="p-5 sm:p-10">
+                {/* Actionable Items */}
+                <div className="space-y-4 mb-10">
                   {basket.items
                     .filter((i: any) => i.condition !== "DAMAGED")
                     .map((item) => (
                       <div
                         key={item.id}
-                        className="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col lg:flex-row items-start lg:items-center gap-5 hover:border-orange-200 hover:bg-orange-50/30 transition-all duration-200"
+                        className="p-5 bg-gray-50 border-2 border-gray-100 flex flex-col lg:flex-row items-start lg:items-center gap-6 hover:border-orange-500 transition-all"
                       >
-                        {/* Item Info */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-black text-gray-900 leading-snug truncate">
+                          <p className="text-sm sm:text-base font-black/20 text-gray-900 uppercase tracking-tight truncate">
                             {item.title}
                           </p>
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                              Total In Basket: {item.quantity}
+                          <div className="flex flex-wrap items-center gap-4 mt-1">
+                            <span className="text-[10px] font-black/20 text-gray-900/20 uppercase tracking-widest">
+                              Quantity: {item.quantity}
                             </span>
                             {item.tag && (
-                              <span className="text-[10px] font-mono font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
-                                #{item.tag}
+                              <span className="text-[10px] font-mono font-black/20 text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 uppercase tracking-tighter">
+                                ID: {item.tag}
                               </span>
                             )}
                           </div>
                         </div>
 
                         {/* Action Area */}
-                        <div className="flex items-center gap-3 w-full lg:w-auto">
-                          <div className="relative flex-1 lg:w-44">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                          <div className="relative w-full sm:w-44">
                             <input
                               type="number"
                               min="1"
                               max={item.quantity}
-                              placeholder="Qty Damaged"
+                              placeholder="QTY"
                               value={damageCounts[item.id] || ""}
                               onChange={(e) =>
                                 setDamageCounts({
@@ -198,10 +182,10 @@ export default function DamageReport() {
                                   [item.id]: parseInt(e.target.value),
                                 })
                               }
-                              className="w-full pl-4 pr-14 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-sm font-bold outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-gray-300"
+                              className="w-full pl-4 pr-14 py-4 bg-white border-2 border-gray-900 text-xs font-black/20 outline-none focus:bg-orange-50 transition-all uppercase"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-300 uppercase tracking-widest pointer-events-none">
-                              / {item.quantity}
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black/20 text-gray-900/20 uppercase">
+                              MAX {item.quantity}
                             </span>
                           </div>
 
@@ -210,45 +194,40 @@ export default function DamageReport() {
                               handleMarkDamaged(item.id, item.quantity)
                             }
                             disabled={processingId === item.id}
-                            className="bg-orange-500 text-white px-6 py-3.5 rounded-xl font-black text-[11px] hover:bg-orange-600 transition-all uppercase shadow-md shadow-orange-200 active:scale-95 disabled:opacity-50 whitespace-nowrap flex items-center gap-2"
+                            className="w-full sm:w-auto bg-orange-600 text-white px-8 py-4 font-black/20 text-[10px] uppercase tracking-widest hover:bg-gray-900 transition-all active:scale-95 disabled:opacity-50"
                           >
-                            {processingId === item.id ? (
-                              <>
-                                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Splitting...
-                              </>
-                            ) : (
-                              "Mark Damaged"
-                            )}
+                            {processingId === item.id
+                              ? "SPLITTING..."
+                              : "Mark Damaged"}
                           </button>
                         </div>
                       </div>
                     ))}
                 </div>
 
-                {/* Show already marked damaged items as reference */}
+                {/* Reported Damaged Section */}
                 {basket.items.some((i: any) => i.condition === "DAMAGED") && (
-                  <div className="border-t border-gray-100 pt-6 mb-6">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
-                      Already Reported
+                  <div className="border-t-4 border-gray-100 pt-8 sm:pt-10 mb-8">
+                    <p className="text-[10px] font-black/20 text-gray-900/20 uppercase tracking-[0.3em] mb-4">
+                      Reported Damaged
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {basket.items
                         .filter((i: any) => i.condition === "DAMAGED")
                         .map((item) => (
                           <div
                             key={item.id}
-                            className="p-3.5 bg-red-50 rounded-xl border border-red-100 flex justify-between items-center"
+                            className="p-5 bg-red-50 border-2 border-red-600 flex justify-between items-center"
                           >
-                            <div>
-                              <p className="text-xs font-bold text-gray-800 line-clamp-1">
+                            <div className="min-w-0 pr-4">
+                              <p className="text-xs font-black/20 text-red-700 uppercase truncate">
                                 {item.title}
                               </p>
-                              <p className="text-[9px] font-black text-red-500 uppercase tracking-tight mt-0.5">
-                                Damaged • Qty: {item.quantity}
+                              <p className="text-[10px] font-black/20 text-red-500 uppercase tracking-widest mt-1">
+                                Qty: {item.quantity}
                               </p>
                             </div>
-                            <div className="bg-red-500 text-white px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-tight shrink-0 ml-3">
+                            <div className="bg-red-600 text-white px-3 py-1 text-[9px] font-black/20 uppercase tracking-widest">
                               Reported
                             </div>
                           </div>
@@ -257,15 +236,19 @@ export default function DamageReport() {
                   </div>
                 )}
 
-                {/* Info notice */}
-                <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100 flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center shrink-0 mt-px text-[10px] font-black">
-                    i
+                {/* Info Notice Box */}
+                <div className="bg-orange-50 border-l-8 border-orange-500 p-6 flex items-start gap-4 shadow-sm">
+                  <div className="w-6 h-6 bg-orange-500 text-white flex items-center justify-center shrink-0 text-xs font-black/20">
+                    !
                   </div>
-                  <p className="text-[10px] text-orange-800 font-bold leading-relaxed">
-                    Marking a <strong>partial quantity</strong> will split the item into two records: one Good, one Damaged.
-                    Marking the <strong>full quantity</strong> flags the entire item as damaged.
-                  </p>
+                  <div className="text-[10px] sm:text-[11px] text-orange-900 font-bold uppercase leading-relaxed tracking-tight">
+                    Audit Logic: Marking a{" "}
+                    <span className="text-orange-600">partial quantity</span>{" "}
+                    will auto-split the item into two entries (Good/Damaged).
+                    Marking{" "}
+                    <span className="text-orange-600">full quantity</span> flags
+                    the original record as Damaged.
+                  </div>
                 </div>
               </div>
             </div>

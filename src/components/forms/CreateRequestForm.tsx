@@ -21,51 +21,57 @@ export default function CreateRequest() {
       });
 
       if (response.status === 201) {
-        toast.success("Bucket created successfully!"); // 2. Success toast
+        toast.success("Bucket created successfully!");
         setTitle("");
         setJustification("");
       }
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.error || err.message || "Failed to create request";
-      toast.error(errorMessage); // 3. Error toast
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 -xl shadow-md border border-gray-200">
-      {/* Toaster component can be here or in your layout.tsx */}
+    <div className="max-w-2xl mx-auto bg-white p-6 sm:p-10 border-1 border-gray-900 shadow-[12px_12px_0px_0px_#f3f4f6] animate-in fade-in zoom-in-95 duration-500">
       <Toaster position="top-right" />
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Header for the Form */}
+      <div className="mb-8">
+        <p className="text-[10px]   uppercase tracking-widest mt-1">
+          Step 01: Define Purpose & Scope
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-[10px]   uppercase tracking-widest mb-2 ml-1">
             Bucket Title
           </label>
           <input
             type="text"
-            placeholder="e.g., Office Hardware Upgrade"
+            placeholder="E.G., OFFICE HARDWARE UPGRADE"
             value={title}
             disabled={loading}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 -lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 disabled:bg-gray-50"
+            className="w-full px-5 py-4 border-2 border-gray-100 focus:border-orange-500 outline-none transition-all text-gray-900 font-bold uppercase placeholder:text-gray-200 placeholder:font-black text-[10px] disabled:bg-gray-50"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-[10px]   uppercase tracking-widest mb-2 ml-1">
             Justification
           </label>
           <textarea
-            placeholder="Describe why this bucket is being created..."
+            placeholder="DESCRIBE WHY THIS BUCKET IS BEING CREATED..."
             value={justification}
             disabled={loading}
             onChange={(e) => setJustification(e.target.value)}
-            rows={4}
-            className="w-full px-4 py-2 border border-gray-300 -lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 disabled:bg-gray-50"
+            rows={5}
+            className="w-full px-5 py-4 border-2 border-gray-100 focus:border-orange-500 outline-none transition-all text-gray-900 font-bold uppercase placeholder:text-gray-200 placeholder:font-black text-[10px] disabled:bg-gray-50"
             required
           />
         </div>
@@ -73,18 +79,19 @@ export default function CreateRequest() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full flex items-center justify-center py-2.5 -lg font-semibold text-white transition-all ${
+          className={`w-full flex items-center justify-center py-5 font-black uppercase text-xs tracking-[0.2em] text-white transition-all shadow-lg active:scale-[0.98] ${
             loading
-              ? "bg-orange-300 cursor-not-allowed"
-              : "bg-orange-500 hover:bg-orange-600 active:scale-[0.98]"
+              ? "bg-gray-200 cursor-n "
+              : "bg-orange-600 hover:bg-gray-900 shadow-orange-100 hover:shadow-gray-200"
           }`}
         >
           {loading ? (
-            <>
+            <div className="flex items-center gap-3">
               <LoadingSpinner />
-            </>
+              <span>Initializing...</span>
+            </div>
           ) : (
-            "Create Bucket"
+            "Confirm & Create Bucket"
           )}
         </button>
       </form>

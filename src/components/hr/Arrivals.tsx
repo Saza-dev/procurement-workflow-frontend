@@ -27,17 +27,14 @@ export default function Arrivals() {
     fetchMoveHR();
   }, []);
 
-  // Updated: Loops through all items in the basket and tags them
   const handleGenerateTags = async (basketId: number) => {
     const basket = requests.find((r) => r.id === basketId);
     if (!basket) return;
 
     setIsGenerating(basketId);
-
     try {
-      // Create a list of promises for every item that doesn't have a tag yet
       const tagPromises = basket.items
-        .filter((item: any) => !item.tag) // Only tag items that need it
+        .filter((item: any) => !item.tag)
         .map((item) => api.items.addTag(item.id));
 
       if (tagPromises.length === 0) {
@@ -46,9 +43,8 @@ export default function Arrivals() {
       }
 
       await Promise.all(tagPromises);
-
       toast.success(`Successfully generated ${tagPromises.length} asset tags!`);
-      fetchMoveHR(); // Refresh the UI to show the new tags
+      fetchMoveHR();
     } catch (err) {
       handleApiError(err);
     } finally {
@@ -80,29 +76,34 @@ export default function Arrivals() {
 
   if (loading)
     return (
-      <div className="p-20 text-center animate-pulse text-gray-400 font-black tracking-widest">
-        LOADING LOGISTICS...
+      <div className="p-10 sm:p-20 text-center animate-pulse text-gray-900/20 font-black/20 uppercase tracking-[0.4em] text-lg sm:text-2xl">
+        LOADING LOGISTICS
       </div>
     );
 
   return (
-    <div className="max-w-6xl mx-auto p-8 bg-white min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 sm:p-8 bg-white min-h-screen">
       <Toaster position="top-right" />
 
-      <div className="mb-12">
-        <h2 className="text-4xl font-black text-gray-900 tracking-tighter uppercase">
+      {/* --- PAGE HEADER --- */}
+      <div className="mb-10 sm:mb-16 relative">
+        <h2 className="text-3xl sm:text-5xl font-black/20 text-gray-900 tracking-tighter uppercase leading-none">
           Logistics & Tagging
         </h2>
-        <p className="text-gray-400 text-sm mt-1 italic">
+        <p className="text-gray-400 text-xs sm:text-sm mt-2 font-bold uppercase tracking-tight">
           Verify auto-generated tags and confirm physical transfer.
         </p>
+        {/* Decorative background text using requested opacity */}
+        <div className="absolute -top-6 -left-2 text-6xl sm:text-8xl font-black/20 text-black/5 -z-10 select-none pointer-events-none uppercase">
+          LOGS
+        </div>
       </div>
 
-      <div className="space-y-16">
+      <div className="space-y-12 sm:space-y-20">
         {requests.length === 0 ? (
-          <div className="text-center py-32 bg-gray-50 -[3rem] border-2 border-dashed border-gray-200">
-            <p className="text-gray-400 font-bold text-lg">
-              LOGISTICS QUEUE IS CLEAR
+          <div className="text-center py-24 sm:py-32 bg-gray-50 border-4 border-dashed border-gray-200">
+            <p className="text-gray-900/20 font-black/20 text-xl sm:text-3xl uppercase tracking-widest">
+              QUEUE CLEAR
             </p>
           </div>
         ) : (
@@ -113,55 +114,71 @@ export default function Arrivals() {
             return (
               <div
                 key={basket.id}
-                className="bg-white -[3rem] border-4 border-gray-900 shadow-[15px_15px_0px_0px_#f3f4f6] overflow-hidden"
+                className="bg-white border border-gray-900 shadow-[10px_10px_0px_0px_#000000] sm:shadow-[20px_20px_0px_0px_#f3f4f6]"
               >
-                {/* Header */}
-                <div className="bg-gray-900 p-8 flex flex-col md:flex-row justify-between items-center text-white">
-                  <div>
-                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">
+                {/* Basket Header */}
+                <div className="bg-gray-900 p-6 sm:p-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 text-white relative overflow-hidden">
+                  <div className="z-10">
+                    <p className="text-[10px] font-black/20 text-orange-500 uppercase tracking-widest mb-1">
                       Dispatch Ready
                     </p>
-                    <h3 className="text-2xl font-black">{basket.title}</h3>
+                    <h3 className="text-2xl  font-black/20 uppercase tracking-tighter leading-none">
+                      {basket.title}
+                    </h3>
                   </div>
+
+                  {/* Decorative ID using font-black/20/20 style */}
+                  <span className="absolute right-[-10px] top-[-10px] text-7xl font-black/20 text-white/10 select-none pointer-events-none uppercase">
+                    #{basket.id}
+                  </span>
+
                   <button
                     onClick={() => handleGenerateTags(basket.id)}
                     disabled={isFullyTagged || isGenerating === basket.id}
-                    className={`px-8 py-3 -2xl font-black text-xs transition-all ${
+                    className={`z-10 w-full lg:w-auto px-8 py-4 font-black/20 text-xs uppercase tracking-[0.2em] transition-all border-2 ${
                       isFullyTagged
-                        ? "bg-green-600/20 text-green-500 cursor-not-allowed border border-green-600/30"
-                        : "bg-orange-500 text-white hover:bg-orange-600 shadow-lg active:scale-95"
+                        ? "bg-transparent text-green-500 border-green-500 cursor-not-allowed"
+                        : "bg-orange-500 text-white border-orange-500 hover:bg-white hover:text-orange-600 active:scale-95"
                     }`}
                   >
                     {isGenerating === basket.id
-                      ? "GENERATING..."
+                      ? "PROCESSING..."
                       : isFullyTagged
-                        ? "TAGS GENERATED"
+                        ? "TAGS VERIFIED"
                         : "GENERATE ALL TAGS"}
                   </button>
                 </div>
 
-                <div className="p-8">
-                  {/* Items List */}
+                <div className="p-5 sm:p-10">
+                  {/* Items List Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                     {basket.items.map((item: any) => (
                       <div
                         key={item.id}
-                        className={`p-5 -3xl border-2 transition-all flex items-center justify-between ${item.tag ? "bg-gray-50 border-green-200" : "bg-white border-gray-100"}`}
+                        className={`p-5 border-2 transition-all flex items-center justify-between gap-4 ${
+                          item.tag
+                            ? "bg-gray-50 border-green-600"
+                            : "bg-white border-gray-200"
+                        }`}
                       >
-                        <div>
-                          <p className="text-sm font-black text-gray-800 line-clamp-1">
+                        <div className="min-w-0">
+                          <p className="text-sm font-black/20 text-gray-900 uppercase tracking-tight truncate">
                             {item.title}
                           </p>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">
-                            Qty: {item.quantity}
+                          <p className="text-[10px] font-black/20 text-gray-400 uppercase tracking-widest mt-1">
+                            Units: {item.quantity}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
-                            Asset Tag
+                        <div className="text-right shrink-0">
+                          <p className="text-[8px] font-black/20 text-gray-400 uppercase tracking-[0.2em] mb-1">
+                            Asset ID
                           </p>
                           <p
-                            className={`text-sm font-black font-mono ${item.tag ? "text-green-600" : "text-gray-300 italic"}`}
+                            className={`text-xs sm:text-sm font-black/20 font-mono tracking-tighter ${
+                              item.tag
+                                ? "text-green-600"
+                                : "text-gray-500 italic"
+                            }`}
                           >
                             {item.tag || "WAITING"}
                           </p>
@@ -170,20 +187,30 @@ export default function Arrivals() {
                     ))}
                   </div>
 
-                  {/* Submit */}
-                  <div className="border-t-2 border-gray-50 pt-8">
+                  {/* Submit / Handover Area */}
+                  <div className="border-t-4 border-gray-100 pt-8 sm:pt-10">
+                    <div className="mb-4 flex justify-between items-center px-1">
+                      <span className="text-[10px] font-black/20 text-gray-900 uppercase tracking-widest">
+                        Verification Status
+                      </span>
+                      <span
+                        className={`text-[10px] font-black/20 uppercase ${isFullyTagged ? "text-green-600" : "text-red-500"}`}
+                      >
+                        {itemsWithTags} / {basket.items.length} TAGS
+                      </span>
+                    </div>
                     <button
                       onClick={() => handleHandover(basket.id)}
                       disabled={!isFullyTagged || isFinishing === basket.id}
-                      className={`w-full py-6 -[2rem] font-black text-sm tracking-widest transition-all ${
+                      className={`w-full py-5 sm:py-7 font-black/20 text-xs sm:text-sm tracking-[0.3em] uppercase transition-all border-4 ${
                         isFullyTagged
-                          ? "bg-gray-900 text-white hover:bg-black shadow-xl active:scale-[0.98]"
-                          : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                          ? "bg-gray-900 text-white border-gray-900 hover:bg-white hover:text-gray-900 active:scale-95 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]"
+                          : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                       }`}
                     >
                       {isFinishing === basket.id
-                        ? "PROCESSING..."
-                        : "CONFIRM HANDOVER TO DEPARTMENT HEAD"}
+                        ? "UPDATING LEDGER..."
+                        : "CONFIRM PHYSICAL HANDOVER"}
                     </button>
                   </div>
                 </div>

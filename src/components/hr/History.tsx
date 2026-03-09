@@ -30,7 +30,6 @@ export default function History() {
     fetchHistory();
   }, []);
 
-  // Filtering Logic
   const filteredRequests = useMemo(() => {
     return requests.filter((req) => {
       const matchesSearch =
@@ -48,49 +47,51 @@ export default function History() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "HANDED_OVER":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "bg-green-100 text-green-700 border-green-600";
       case "REJECTED_REVISION_REQUIRED":
-        return "bg-red-100 text-red-700 border-red-200";
+        return "bg-red-100 text-red-700 border-red-600";
       case "PENDING_APPROVALS":
-        return "bg-orange-100 text-orange-700 border-orange-200";
+        return "bg-orange-100 text-orange-700 border-orange-600";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-600";
     }
   };
 
   if (loading)
     return (
-      <div className="p-20 flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-orange-100 border-t-orange-500 rounded-full animate-spin" />
-        <p className="text-gray-400 font-bold text-xs uppercase tracking-widest animate-pulse">
+      <div className="p-10 sm:p-20 flex flex-col items-center justify-center gap-4">
+        {/* Sharp Loading Spinner */}
+        <div className="w-10 h-10 border-4 border-orange-100 border-t-orange-500 animate-spin" />
+        <p className="text-gray-400 font-black/20 text-[10px] uppercase tracking-[0.3em] animate-pulse">
           Fetching audit logs...
         </p>
       </div>
     );
 
   return (
-    <div className="max-w-7xl mx-auto p-8 bg-white min-h-screen">
+    <div className="max-w-7xl mx-auto p-4 sm:p-8 bg-white min-h-screen">
       <Toaster
         position="top-right"
         toastOptions={{
           className:
-            "text-sm font-semibold shadow-xl rounded-2xl border border-orange-50 bg-white text-gray-900",
+            "text-[10px] font-black/20 uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-gray-900 bg-white text-gray-900",
         }}
       />
 
       {/* Header & Controls */}
-      <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div className="mb-8 sm:mb-12 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-orange-500 text-white flex items-center justify-center rounded-2xl shadow-lg shadow-orange-200 shrink-0">
+          {/* Sharp Icon Box */}
+          <div className="w-14 h-14 bg-gray-900 text-white flex items-center justify-center border-b-4 border-r-4 border-orange-500 shrink-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-7 h-7"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth="3"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
             >
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
@@ -100,45 +101,45 @@ export default function History() {
             </svg>
           </div>
           <div>
-            <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-0.5">
+            <p className="text-[10px] font-black/20 text-orange-600 uppercase tracking-[0.2em] mb-1">
               Audit Log
             </p>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase leading-none">
+            <h2 className="text-2xl sm:text-4xl font-black/20 text-gray-900 tracking-tighter uppercase leading-none">
               Procurement History
             </h2>
-            <p className="text-gray-400 text-sm mt-1.5 font-medium">
+            <p className="text-gray-400 text-xs mt-2 font-bold uppercase tracking-tight">
               Complete record of all baskets and asset lifecycle.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-72">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+                strokeWidth="3"
                 d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
               />
             </svg>
             <input
               type="text"
-              placeholder="Search by ID, Title, or Email..."
+              placeholder="SEARCH BY ID, TITLE, EMAIL..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-xs font-bold outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-50 focus:bg-white transition-all placeholder:text-gray-300"
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-900 text-[10px] font-black/20 outline-none focus:bg-white transition-all placeholder:text-gray-300 uppercase tracking-widest"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-xs font-black outline-none cursor-pointer focus:border-orange-500 transition-all"
+            className="px-4 py-4 text-black  border-2 border-gray-900 text-[10px] font-black/20 outline-none cursor-pointer  transition-all uppercase tracking-widest"
           >
             <option value="ALL">ALL STATUSES</option>
             <option value="PENDING_APPROVALS">PENDING APPROVAL</option>
@@ -151,14 +152,18 @@ export default function History() {
       </div>
 
       {/* Results count */}
-      <div className="mb-4 flex items-center gap-2">
-        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-          {filteredRequests.length} record{filteredRequests.length !== 1 ? "s" : ""} found
+      <div className="mb-6 flex items-center gap-3">
+        <span className="text-[9px] font-black/20 text-gray-400 uppercase tracking-[0.2em]">
+          {filteredRequests.length} record
+          {filteredRequests.length !== 1 ? "s" : ""} found
         </span>
         {search || statusFilter !== "ALL" ? (
           <button
-            onClick={() => { setSearch(""); setStatusFilter("ALL"); }}
-            className="text-[10px] font-black text-orange-500 hover:text-orange-700 uppercase tracking-widest transition-colors"
+            onClick={() => {
+              setSearch("");
+              setStatusFilter("ALL");
+            }}
+            className="text-[9px] font-black/20 text-orange-600 hover:text-gray-900 uppercase tracking-widest transition-colors"
           >
             · Clear filters
           </button>
@@ -166,10 +171,10 @@ export default function History() {
       </div>
 
       {/* History List */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredRequests.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <p className="text-gray-400 font-bold">
+          <div className="text-center py-24 sm:py-32 bg-gray-50 border-4 border-dashed border-gray-200">
+            <p className="text-gray-400 font-black/20 uppercase tracking-widest text-sm">
               No records match your filters.
             </p>
           </div>
@@ -177,76 +182,78 @@ export default function History() {
           filteredRequests.map((req) => (
             <div
               key={req.id}
-              className="group bg-white border-2 border-gray-200 rounded-3xl overflow-hidden hover:border-orange-200 hover:shadow-lg transition-all duration-200"
+              className={`group bg-white border-2 border-gray-900 transition-all duration-200 ${expandedId === req.id ? "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" : "hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]"}`}
             >
               {/* Summary Row */}
               <div
                 onClick={() =>
                   setExpandedId(expandedId === req.id ? null : req.id)
                 }
-                className="p-6 flex flex-col lg:flex-row justify-between items-center gap-4 cursor-pointer"
+                className="p-5 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 cursor-pointer"
               >
-                <div className="flex items-center gap-4 w-full lg:w-auto">
-                  <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg shrink-0">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <span className="text-[10px] font-black/20 text-white bg-gray-900 px-3 py-1.5 shrink-0 tracking-widest">
                     #{req.id}
                   </span>
                   <div>
-                    <h3 className="text-base font-black text-gray-900 capitalize leading-tight">
+                    <h3 className="text-base sm:text-lg font-black/20 text-gray-900 uppercase tracking-tight leading-tight group-hover:text-orange-600 transition-colors">
                       {req.title}
                     </h3>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">
+                    <p className="text-[9px] text-gray-400 font-black/20 uppercase tracking-widest mt-1">
                       {req.requester?.email} •{" "}
                       {new Date(req.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-end">
-                  <div className="text-right">
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">
+                <div className="flex items-center gap-8 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-100">
+                  <div className="text-left sm:text-right">
+                    <p className="text-[8px] font-black/20 text-gray-400 uppercase tracking-widest mb-1">
                       Total Value
                     </p>
-                    <p className="text-xl font-black text-gray-900">
+                    <p className="text-xl sm:text-2xl font-black/20 text-gray-900 leading-none">
                       ${Number(req.totalValue).toLocaleString()}
                     </p>
                   </div>
-                  <div
-                    className={`px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-tight ${getStatusColor(req.status)}`}
-                  >
-                    {req.status.replace(/_/g, " ")}
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`px-3 py-1.5 border-2 text-[9px] font-black/20 uppercase tracking-widest ${getStatusColor(req.status)}`}
+                    >
+                      {req.status.replace(/_/g, " ")}
+                    </div>
+                    <svg
+                      className={`hidden sm:block w-5 h-5 text-gray-300 transition-transform duration-300 shrink-0 ${expandedId === req.id ? "rotate-180 text-gray-900" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="square"
+                        strokeLinejoin="miter"
+                        strokeWidth="4"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-gray-300 transition-transform duration-300 shrink-0 ${expandedId === req.id ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="3"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
                 </div>
               </div>
 
               {/* Detailed View */}
               {expandedId === req.id && (
-                <div className="px-6 pb-8 pt-2 border-t-2 border-gray-100 bg-gray-50/40 animate-in slide-in-from-top-2 duration-200">
+                <div className="px-5 sm:px-8 pb-10 pt-4 border-t-2 border-gray-100 bg-gray-50/50 animate-in slide-in-from-top-2">
                   {/* Internal Details Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-                    <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-sm">
-                      <p className="text-[9px] font-black text-orange-500 uppercase tracking-widest mb-2">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                    <div className="bg-white p-6 border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                      <p className="text-[9px] font-black/20 text-orange-600 uppercase tracking-widest mb-3 border-b border-orange-100 pb-1">
                         Justification
                       </p>
-                      <p className="text-xs text-gray-600 leading-relaxed italic">
+                      <p className="text-[10px] font-bold text-gray-600 leading-relaxed uppercase">
                         {req.justification || "No justification provided."}
                       </p>
                     </div>
 
-                    <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-sm">
-                      <p className="text-[9px] font-black text-orange-500 uppercase tracking-widest mb-2">
+                    <div className="bg-white p-6 border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                      <p className="text-[9px] font-black/20 text-orange-600 uppercase tracking-widest mb-3 border-b border-orange-100 pb-1">
                         Approval Chain
                       </p>
                       <div className="space-y-2">
@@ -254,94 +261,94 @@ export default function History() {
                           (app: any, idx: number) => (
                             <div
                               key={idx}
-                              className="flex items-center justify-between text-[10px]"
+                              className="flex items-center justify-between text-[9px]"
                             >
-                              <span className="font-black text-gray-700">
+                              <span className="font-black/20 text-gray-900 uppercase">
                                 {app.role}
                               </span>
                               <span
-                                className={`font-bold px-2 py-0.5 rounded-md text-[9px] ${app.status === "APPROVED" ? "text-green-700 bg-green-100" : "text-red-700 bg-red-100"}`}
+                                className={`font-black/20 px-2 py-0.5 border text-[8px] uppercase tracking-widest ${app.status === "APPROVED" ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
                               >
                                 {app.status}
                               </span>
                             </div>
                           ),
                         ) || (
-                          <p className="text-[10px] italic text-gray-400">
+                          <p className="text-[9px] font-bold uppercase text-gray-300">
                             No approvals recorded yet.
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-sm">
-                      <p className="text-[9px] font-black text-orange-500 uppercase tracking-widest mb-2">
+                    <div className="bg-white p-6 border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                      <p className="text-[9px] font-black/20 text-orange-600 uppercase tracking-widest mb-3 border-b border-orange-100 pb-1">
                         Metadata
                       </p>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-1.5">
+                      <p className="text-[9px] text-gray-500 font-black/20 uppercase mb-2">
                         Version: v{req.version}
                       </p>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase">
-                        Last Updated: {new Date(req.updatedAt).toLocaleString()}
+                      <p className="text-[9px] text-gray-500 font-black/20 uppercase">
+                        Sync: {new Date(req.updatedAt).toLocaleString()}
                       </p>
                     </div>
                   </div>
 
                   {/* Items Table */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
-                    <table className="w-full text-left">
-                      <thead className="bg-gray-950 text-white">
+                  <div className="bg-white border-2 border-gray-900 overflow-x-auto shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                    <table className="w-full text-left min-w-[700px]">
+                      <thead className="bg-gray-900 text-white">
                         <tr>
-                          <th className="p-4 text-[9px] font-black uppercase tracking-widest">
+                          <th className="p-4 text-[9px] font-black/20 uppercase tracking-widest border-r border-gray-800">
                             Item Description
                           </th>
-                          <th className="p-4 text-[9px] font-black uppercase tracking-widest text-center">
+                          <th className="p-4 text-[9px] font-black/20 uppercase tracking-widest text-center border-r border-gray-800">
                             Qty
                           </th>
-                          <th className="p-4 text-[9px] font-black uppercase tracking-widest">
+                          <th className="p-4 text-[9px] font-black/20 uppercase tracking-widest border-r border-gray-800">
                             Price
                           </th>
-                          <th className="p-4 text-[9px] font-black uppercase tracking-widest">
+                          <th className="p-4 text-[9px] font-black/20 uppercase tracking-widest border-r border-gray-800">
                             Invoice #
                           </th>
-                          <th className="p-4 text-[9px] font-black uppercase tracking-widest text-right">
+                          <th className="p-4 text-[9px] font-black/20 uppercase tracking-widest text-right">
                             Asset Tag
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-50">
+                      <tbody className="divide-y-2 divide-gray-100">
                         {req.items && req.items.length > 0 ? (
                           req.items.map((item: any) => (
                             <tr
                               key={item.id}
-                              className="hover:bg-orange-50/30 transition-colors"
+                              className="hover:bg-orange-50/50 transition-colors"
                             >
-                              <td className="p-4">
-                                <p className="text-xs font-black text-gray-800">
+                              <td className="p-4 border-r border-gray-50">
+                                <p className="text-[10px] font-black/20 text-gray-900 uppercase tracking-tight">
                                   {item.title}
                                 </p>
-                                <p className="text-[9px] text-gray-400 uppercase font-bold mt-0.5">
+                                <p className="text-[8px] text-gray-400 uppercase font-black/20 tracking-widest mt-0.5">
                                   {item.inWarehouse
-                                    ? "Warehouse stock"
-                                    : "Market purchase"}
+                                    ? "WAREHOUSE STOCK"
+                                    : "MARKET PURCHASE"}
                                 </p>
                               </td>
-                              <td className="p-4 text-center text-xs font-bold text-gray-600">
+                              <td className="p-4 text-center text-[10px] font-black/20 text-gray-600 border-r border-gray-50">
                                 {item.quantity}
                               </td>
-                              <td className="p-4 text-xs font-black text-gray-900">
+                              <td className="p-4 text-[10px] font-black/20 text-gray-900 border-r border-gray-50">
                                 ${Number(item.price).toLocaleString()}
                               </td>
-                              <td className="p-4">
+                              <td className="p-4 border-r border-gray-50">
                                 {item.invoiceNumber ? (
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] font-bold text-gray-700">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[9px] font-black/20 text-gray-900 uppercase">
                                       {item.invoiceNumber}
                                     </span>
                                     <a
                                       href={item.invoiceUrl}
                                       target="_blank"
-                                      className="text-orange-500 hover:text-orange-700 transition-colors"
+                                      className="text-orange-600 hover:text-gray-900 transition-colors"
                                     >
                                       <svg
                                         className="w-3 h-3"
@@ -353,30 +360,29 @@ export default function History() {
                                     </a>
                                   </div>
                                 ) : (
-                                  <span className="text-[10px] italic text-gray-300">
+                                  <span className="text-[9px] font-black/20 text-gray-200 uppercase">
                                     N/A
                                   </span>
                                 )}
                               </td>
                               <td className="p-4 text-right">
                                 {item.tag ? (
-                                  <span className="text-[10px] font-mono font-black text-green-700 bg-green-100 border border-green-200 px-2 py-1 rounded-lg">
+                                  <span className="text-[9px] font-mono font-black/20 text-green-700 bg-green-50 border-2 border-green-600 px-2 py-1 uppercase tracking-widest">
                                     {item.tag}
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] italic text-gray-300">
-                                    Unassigned
+                                  <span className="text-[9px] font-black/20 text-gray-200 uppercase tracking-widest">
+                                    PENDING
                                   </span>
                                 )}
                               </td>
                             </tr>
                           ))
                         ) : (
-                          /* Empty State for the Table */
                           <tr>
                             <td
                               colSpan={5}
-                              className="p-8 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest italic"
+                              className="p-10 text-center text-[9px] font-black/20 text-gray-300 uppercase tracking-[0.3em] italic"
                             >
                               No items found in this request record.
                             </td>

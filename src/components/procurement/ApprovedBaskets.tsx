@@ -63,11 +63,8 @@ export default function ApprovedBaskets() {
     }
   };
 
-  // NEW: Pass to HR Logic
   const handlePassToHR = async (basketId: number) => {
     const basket = requests.find((r) => r.id === basketId);
-
-    // Check if every item that is NOT in warehouse has an invoice
     const allInvoiced = basket?.items.every(
       (item) => item.inWarehouse || (item.invoiceNumber && item.invoiceUrl),
     );
@@ -80,10 +77,9 @@ export default function ApprovedBaskets() {
 
     setIsSubmitting(basketId);
     try {
-      // Change status to PENDING_HR_FUNDS or similar
       await api.requests.changeStatus(basketId, "MOVE_HR");
       toast.success("Basket passed to HR successfully!");
-      fetchApproved(); // Refresh list to remove the passed basket
+      fetchApproved();
     } catch (err) {
       handleApiError(err);
     } finally {
@@ -93,35 +89,34 @@ export default function ApprovedBaskets() {
 
   if (loading)
     return (
-      <div className="p-20 text-center animate-pulse text-gray-400 font-black">
+      <div className="p-10 sm:p-20 text-center animate-pulse text-gray-400 font-black/20 uppercase tracking-widest text-xs sm:text-base">
         Loading Approved Baskets...
       </div>
     );
 
   return (
-    <div className="max-w-6xl mx-auto p-8 bg-white min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 sm:p-8 bg-white min-h-screen">
       <Toaster position="top-right" />
-      <div className="mb-10 flex justify-between items-end">
-        <div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">
-            Post-Approval Management
-          </h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Provide invoices for purchase or release warehouse items to HR.
-          </p>
-        </div>
+
+      {/* --- HEADER --- */}
+      <div className="mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-4xl font-black/20 text-gray-900 tracking-tighter uppercase leading-none">
+          Post-Approval Management
+        </h2>
+        <p className="text-gray-400 text-xs sm:text-sm mt-2 font-bold uppercase tracking-tight">
+          Provide invoices for purchase or release warehouse items to HR.
+        </p>
       </div>
 
-      <div className="space-y-12">
+      <div className="space-y-8 sm:space-y-16">
         {requests.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 -[3rem] border-2 border-dashed">
-            <p className="text-gray-400 font-bold">
+          <div className="text-center py-20 sm:py-32 bg-gray-50 border border-dashed border-gray-200">
+            <p className="text-gray-400 font-black/20 uppercase tracking-widest text-sm sm:text-lg">
               No approved baskets pending invoices.
             </p>
           </div>
         ) : (
           requests.map((basket) => {
-            // Calculate if this specific basket is ready for HR
             const isReadyForHR = basket.items.every(
               (item) =>
                 item.inWarehouse || (item.invoiceNumber && item.invoiceUrl),
@@ -130,14 +125,15 @@ export default function ApprovedBaskets() {
             return (
               <div
                 key={basket.id}
-                className="bg-white -[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-100/50"
+                className="bg-white border border-gray-900 p-5 sm:p-10 shadow-[10px_10px_0px_0px_rgba(0,0,0,0.05)] transition-all"
               >
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                {/* Basket Header */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                   <div>
-                    <span className="text-[10px] font-black bg-green-100 text-green-600 px-3 py-1 -full uppercase tracking-widest">
+                    <span className="text-[10px] font-black/20 bg-green-600 text-white px-3 py-1 uppercase tracking-widest">
                       Authorized
                     </span>
-                    <h3 className="text-2xl font-black text-gray-900 mt-2">
+                    <h3 className="text-xl sm:text-3xl font-black/20 text-gray-900 mt-3 uppercase tracking-tight">
                       {basket.title}
                     </h3>
                   </div>
@@ -145,7 +141,7 @@ export default function ApprovedBaskets() {
                   <button
                     onClick={() => handlePassToHR(basket.id)}
                     disabled={isSubmitting === basket.id}
-                    className={`px-10 py-4 -2xl font-black text-xs transition-all shadow-lg active:scale-95 ${
+                    className={`w-full lg:w-auto px-8 py-4 font-black/20 text-xs uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95 ${
                       isReadyForHR
                         ? "bg-gray-900 text-white hover:bg-orange-600"
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -153,44 +149,51 @@ export default function ApprovedBaskets() {
                   >
                     {isSubmitting === basket.id
                       ? "Processing..."
-                      : "PASS TO HR"}
+                      : "Pass to HR"}
                   </button>
                 </div>
 
+                {/* Items List */}
                 <div className="space-y-4">
                   {basket.items.map((item) => (
                     <div
                       key={item.id}
-                      className={`p-5 -3xl border transition-all ${item.inWarehouse ? "bg-green-50/50 border-green-100" : "bg-gray-50 border-gray-100"}`}
+                      className={`p-4 sm:p-6 border-2 transition-all ${
+                        item.inWarehouse
+                          ? "bg-green-50 border-green-200"
+                          : "bg-gray-50 border-gray-100"
+                      }`}
                     >
-                      <div className="flex flex-col lg:flex-row items-center gap-6">
-                        <div className="flex-1 w-full text-center lg:text-left">
-                          <p className="text-sm font-black text-gray-800">
+                      <div className="flex flex-col xl:flex-row items-start xl:items-center gap-6">
+                        {/* Item Info */}
+                        <div className="flex-1 w-full">
+                          <p className="text-sm sm:text-base font-black/20 text-gray-900 uppercase tracking-tight">
                             {item.title}
                           </p>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">
+                          <p className="text-[10px] sm:text-xs text-gray-400 font-black/20 uppercase tracking-widest mt-1">
                             Quantity: {item.quantity}
                           </p>
                         </div>
 
+                        {/* Action Area (Warehouse vs Market) */}
                         {item.inWarehouse ? (
-                          <div className="flex-[2] flex items-center justify-center bg-white text-green-600 border border-green-200 -2xl py-4 px-6 shadow-sm">
+                          <div className="w-full xl:w-auto flex items-center justify-center bg-white text-green-600 border-2 border-green-600 py-3 px-6">
                             <svg
-                              className="w-4 h-4 mr-2"
+                              className="w-4 h-4 mr-3"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
                               <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                             </svg>
-                            <span className="text-[10px] font-black uppercase tracking-tight">
-                              Stock Item - Ready to Pass
+                            <span className="text-[10px] font-black/20 uppercase tracking-widest">
+                              Stock Item - Ready
                             </span>
                           </div>
                         ) : (
-                          <div className="flex-[2] w-full grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div className="w-full xl:flex-[2] grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <input
                               type="text"
-                              placeholder="Invoice #"
+                              placeholder="INVOICE #"
                               defaultValue={item.invoiceNumber || ""}
                               onChange={(e) =>
                                 handleInputChange(
@@ -199,11 +202,11 @@ export default function ApprovedBaskets() {
                                   e.target.value,
                                 )
                               }
-                              className="bg-white border border-gray-200 text-xs p-3 -xl outline-none focus:ring-2 focus:ring-orange-500 shadow-sm"
+                              className="bg-white border-2 border-gray-100 text-[10px] font-black/20 uppercase p-3 outline-none focus:border-orange-500 transition-all"
                             />
                             <input
                               type="text"
-                              placeholder="PDF/Link"
+                              placeholder="PDF LINK / URL"
                               defaultValue={item.invoiceUrl || ""}
                               onChange={(e) =>
                                 handleInputChange(
@@ -212,15 +215,15 @@ export default function ApprovedBaskets() {
                                   e.target.value,
                                 )
                               }
-                              className="bg-white border border-gray-200 text-xs p-3 -xl outline-none focus:ring-2 focus:ring-orange-500 shadow-sm"
+                              className="bg-white border-2 border-gray-100 text-[10px] font-black/20 uppercase p-3 outline-none focus:border-orange-500 transition-all"
                             />
                             <button
                               onClick={() => saveInvoice(item.id)}
                               disabled={processingId === item.id}
-                              className={`text-[10px] font-black -xl transition-all uppercase shadow-sm ${
+                              className={`py-3 px-4 text-[9px] font-black/20 uppercase tracking-widest transition-all border-2 ${
                                 item.invoiceNumber
-                                  ? "bg-white text-gray-400 border border-gray-200"
-                                  : "bg-orange-500 text-white hover:bg-orange-600"
+                                  ? "bg-white text-gray-400 border-gray-100"
+                                  : "bg-orange-600 text-white border-orange-600 hover:bg-gray-900 hover:border-gray-900"
                               }`}
                             >
                               {item.invoiceNumber
@@ -233,11 +236,13 @@ export default function ApprovedBaskets() {
                     </div>
                   ))}
                 </div>
+
                 {!isReadyForHR && (
-                  <p className="mt-4 text-[9px] font-bold text-orange-500 uppercase text-center italic">
-                    * All market items must have an invoice number and link
-                    before passing to HR
-                  </p>
+                  <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-100">
+                    <p className="text-[9px] font-black/20 text-orange-600 uppercase text-center tracking-[0.2em]">
+                      * All market items must be invoiced before passing to HR
+                    </p>
+                  </div>
                 )}
               </div>
             );

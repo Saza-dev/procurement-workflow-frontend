@@ -31,22 +31,33 @@ export default function DashboardDH() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* 3. Pass the state setter function to the Sidebar */}
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       <Sidebar
         items={defaultNavItems}
         activeItem={activeView}
         onItemClick={(name) => setActiveView(name)}
       />
 
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">{activeView}</h1>
-          <LogoutButton />
-        </div>
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 flex flex-col min-w-0">
+        {/* TOP HEADER: Clean and Sharp */}
+        <header className="sticky top-0 lg:static z-30 bg-white/80 backdrop-blur-md border-b-2 border-gray-100 px-4 py-4 sm:px-8 sm:py-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-xl sm:text-3xl font-black text-gray-900 uppercase tracking-tighter">
+              {activeView}
+            </h1>
+            <div className="h-1 w-12 bg-orange-500 mt-1"></div>
+          </div>
 
-        {/* 4. Display the dynamic content here */}
-        <div className="mt-4">{renderContent()}</div>
+          <div className="flex items-center gap-4">
+            <LogoutButton />
+          </div>
+        </header>
+
+        {/* SCROLLABLE CONTENT */}
+        <div className="p-4 sm:p-8 flex-1 overflow-x-hidden">
+          <div className="max-w-7xl mx-auto">{renderContent()}</div>
+        </div>
       </main>
     </div>
   );

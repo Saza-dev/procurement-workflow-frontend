@@ -18,39 +18,23 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api.auth.login({
-        email,
-        password,
-      });
-
+      const response = await api.auth.login({ email, password });
       const user = response.data.data.user;
 
       await login(user);
-
       toast.success("Login successful!");
 
-      switch (user.role) {
-        case "DH":
-          router.push("/dh");
-          break;
-        case "CEO":
-          router.push("/ceo");
-          break;
-        case "HR":
-          router.push("/hr");
-          break;
-        case "PE":
-          router.push("/procurement");
-          break;
-        case "FM":
-          router.push("/finance");
-          break;
-        case "OM":
-          router.push("/operations");
-          break;
-        default:
-          router.push("/dashboard");
-      }
+      // Route based on role
+      const roleRoutes: Record<string, string> = {
+        DH: "/dh",
+        CEO: "/ceo",
+        HR: "/hr",
+        PE: "/procurement",
+        FM: "/finance",
+        OM: "/operations",
+      };
+
+      router.push(roleRoutes[user.role] || "/dashboard");
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || "Invalid credentials";
       toast.error(errorMessage);
@@ -60,63 +44,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 -xl shadow-lg w-full max-w-sm border border-gray-200"
-      >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Welcome Back</h2>
-          <p className="text-gray-500 text-sm mt-2">
-            Please enter your details
+      {/* Main Container: Full width on mobile, constrained on desktop */}
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-black text-gray-900 tracking-tight sm:text-4xl uppercase">
+            Welcome Back
+          </h2>
+          <p className="mt-3 text-sm text-gray-500 font-medium">
+            Please enter your credentials to access the portal.
           </p>
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-1.5 text-sm font-semibold text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              disabled={loading}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              className="w-full px-4 py-2 border border-gray-300 -lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all disabled:bg-gray-50"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1.5 text-sm font-semibold text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              disabled={loading}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 -lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all disabled:bg-gray-50"
-              required
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full mt-8 bg-orange-500 text-white py-2.5 -lg font-bold hover:bg-orange-600 active:scale-[0.98] transition-all flex items-center justify-center disabled:bg-orange-300"
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 bg-white p-6 sm:p-10 shadow-xl border border-gray-100"
         >
-          {loading ? (
-            <div className="h-5 w-5 border-2 border-white border-t-transparent -full animate-spin mr-2"></div>
-          ) : null}
-          {loading ? "Signing in..." : "Login"}
-        </button>
-      </form>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-xs font-black/20 uppercase tracking-widest mb-2 ml-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                disabled={loading}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@company.com"
+                className="block w-full px-5 py-4 text-gray-900 border-2 border-gray-100  placeholder-gray-300 focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all disabled:bg-gray-50 text-sm font-medium"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black/20 uppercase tracking-widest mb-2 ml-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                disabled={loading}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="block w-full px-5 py-4 text-gray-900 border-2 border-gray-100  placeholder-gray-300 focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all disabled:bg-gray-50 text-sm font-medium"
+                required
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="group relative w-full mt-10 flex justify-center py-4 px-4 border border-transparent text-xs font-black uppercase tracking-widest  text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all active:scale-95 disabled:opacity-70 disabled:active:scale-100"
+          >
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : (
+              "Secure Login"
+            )}
+          </button>
+
+          <p className="mt-6 text-center text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
+            Procurement Workflow System v3.0
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

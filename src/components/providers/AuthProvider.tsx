@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         children
       ) : (
         <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
-          <div className="animate-spin  h-12 w-12 border-t-2 border-orange-500"></div>
+          <div className="animate-spin h-12 w-12 border-t-2 rounded-full border-orange-500"></div>
         </div>
       )}
     </AuthContext.Provider>
