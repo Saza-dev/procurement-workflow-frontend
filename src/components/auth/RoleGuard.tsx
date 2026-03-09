@@ -60,6 +60,7 @@ export const RoleGuard = ({
   // 3. If logged in but doesn't have the required role
   if (!hasAnyRole(allowedRoles)) {
     // Return a custom fallback message or nothing
+    
     return fallback ? (
       <>{fallback}</>
     ) : (
