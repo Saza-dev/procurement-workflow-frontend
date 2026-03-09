@@ -51,7 +51,7 @@ export const api = {
       invoiceNumber: string;
       invoiceUrl: string;
     }) => apiClient.post("/items/add-invoice", data),
-    addTag: (itemId: number) => apiClient.post("/items/tag", itemId),
+    addTag: (itemId: number) => apiClient.post("/items/tag", { itemId }),
     markDamaged: (data: { itemId: number; damagedQuantity: number }) =>
       apiClient.post("/items/mark-damaged", data),
     viewByCondition: (condition: string) =>
