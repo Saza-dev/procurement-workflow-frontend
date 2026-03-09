@@ -132,7 +132,7 @@ export default function PEWarranty() {
             <div className="p-6 flex gap-3 bg-white">
               <button
                 onClick={() =>
-                  setConfirmModal({ isOpen: false, itemId: null, type: null })
+                  setConfirmModal({ isOpen: false, itemId: null, type: null, basketId:null })
                 }
                 className="flex-1 py-4 rounded-2xl text-[10px] font-black uppercase text-gray-400 hover:bg-gray-50 transition-colors"
               >

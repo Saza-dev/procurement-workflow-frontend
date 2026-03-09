@@ -38,7 +38,7 @@ export default function Arrivals() {
       // Create a list of promises for every item that doesn't have a tag yet
       const tagPromises = basket.items
         .filter((item: any) => !item.tag) // Only tag items that need it
-        .map((item) => api.items.addTag({ itemId: item.id }));
+        .map((item) => api.items.addTag(item.id));
 
       if (tagPromises.length === 0) {
         toast.error("All items are already tagged!");
