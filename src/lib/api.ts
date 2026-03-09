@@ -61,6 +61,8 @@ export const api = {
       itemId: number,
       data: { condition: string; note?: string },
     ) => apiClient.patch(`/items/${itemId}/condition`, data),
+    removeItem: (basketId: string, itemId: number) =>
+      apiClient.delete(`/items/remove/${basketId}/${itemId}`),
   },
 
   //  --- aprovals ---
