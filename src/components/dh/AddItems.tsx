@@ -5,11 +5,13 @@ import { api, handleApiError } from "@/lib/api";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AddItems() {
-  // State Management
   const [baskets, setBaskets] = useState<any[]>([]);
   const [selectedBasket, setSelectedBasket] = useState<any | null>(null);
   const [basketItems, setBasketItems] = useState<any[]>([]);
+
+  // Modals
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [basketToDelete, setBasketToDelete] = useState<any | null>(null);
 
   // Loading States
   const [isPageLoading, setIsPageLoading] = useState(true);
@@ -24,7 +26,6 @@ export default function AddItems() {
     isHighPriority: false,
   });
 
-  // --- ACTIONS ---
   const fetchBaskets = async () => {
     try {
       setIsPageLoading(true);
@@ -56,10 +57,31 @@ export default function AddItems() {
     }
   };
 
+  // --- DELETE LOGIC ---
+  const handleDeleteBasket = async () => {
+    if (!basketToDelete) return;
+    setIsActionLoading(true);
+    try {
+      await api.requests.deleteBasket(basketToDelete.id);
+      toast.success("Basket deleted successfully");
+
+      if (selectedBasket?.id === basketToDelete.id) {
+        setSelectedBasket(null);
+        setBasketItems([]);
+      }
+
+      setBasketToDelete(null);
+      fetchBaskets();
+    } catch (err) {
+      toast.error(handleApiError(err));
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBasket) return;
-
     if (formData.description.length < 10) {
       toast.error("Description must be at least 10 characters.");
       return;
@@ -73,10 +95,8 @@ export default function AddItems() {
       };
       await api.items.add(selectedBasket.id, formattedData);
       toast.success("Item added!");
-
       const { data } = await api.items.viewByBasket(selectedBasket.id);
       setBasketItems(data.data || []);
-
       setFormData({
         title: "",
         description: "",
@@ -91,21 +111,11 @@ export default function AddItems() {
     }
   };
 
-  const handleOpenConfirmModal = () => {
-    if (!selectedBasket) return;
-    if (basketItems.length === 0) {
-      toast.error("You cannot submit an empty basket.");
-      return;
-    }
-    setShowConfirmModal(true);
-  };
-
   const handleFinalSubmit = async () => {
     try {
       setIsActionLoading(true);
       await api.requests.changeStatus(selectedBasket.id, "SUBMITTED");
       toast.success("Basket submitted successfully!");
-
       setShowConfirmModal(false);
       setSelectedBasket(null);
       setBasketItems([]);
@@ -121,7 +131,38 @@ export default function AddItems() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-1 h-full relative">
       <Toaster position="top-right" />
 
-      {/* --- CONFIRMATION MODAL (No-Rounded) --- */}
+      {/* --- DELETE CONFIRMATION MODAL --- */}
+      {basketToDelete && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-white border-4 border-red-600 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] max-w-sm w-full p-8 text-center">
+            <h3 className="text-xl font-black text-gray-900 uppercase tracking-tighter mb-4">
+              Confirm Deletion
+            </h3>
+            <p className="text-xs font-bold text-gray-500 uppercase mb-8 leading-relaxed">
+              You are about to delete{" "}
+              <span className="text-red-600">"{basketToDelete.title}"</span>.
+              This will permanently remove the basket and all items inside it.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setBasketToDelete(null)}
+                className="flex-1 py-4 border-2 border-gray-900 font-black text-[10px] uppercase tracking-widest hover:bg-gray-100 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteBasket}
+                disabled={isActionLoading}
+                className="flex-1 py-4 bg-red-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-red-700 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+              >
+                {isActionLoading ? "Deleting..." : "Delete Permanently"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- SUBMISSION CONFIRMATION MODAL --- */}
       {showConfirmModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white border-2 border-gray-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] max-w-sm w-full p-6 text-center">
@@ -189,7 +230,7 @@ export default function AddItems() {
             ))}
           </div>
         ) : (
-          <div className="space-y-2 max-h-48 lg:max-h-[75vh] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="space-y-3 max-h-48 lg:max-h-[75vh] overflow-y-auto pr-1 custom-scrollbar">
             {baskets.length === 0 ? (
               <div className="text-center py-10 border-2 border-dashed border-gray-300">
                 <p className="text-gray-400 text-[10px] font-black uppercase">
@@ -198,34 +239,58 @@ export default function AddItems() {
               </div>
             ) : (
               baskets.map((b) => (
-                <button
-                  key={b.id}
-                  disabled={isActionLoading}
-                  onClick={() => handleSelectBasket(b)}
-                  className={`w-full text-left p-4 border-2 transition-all ${
-                    selectedBasket?.id === b.id
-                      ? "border-orange-500 bg-orange-50 shadow-[4px_4px_0px_0px_rgba(249,115,22,0.1)]"
-                      : "border-gray-300 bg-white hover:border-gray-300"
-                  }`}
-                >
-                  <p className="font-black text-xs text-gray-900 uppercase tracking-tight">
-                    {b.title}
-                  </p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mt-1">
-                    ID: {b.id}
-                  </p>
-                </button>
+                <div key={b.id} className="relative group">
+                  <button
+                    disabled={isActionLoading}
+                    onClick={() => handleSelectBasket(b)}
+                    className={`w-full text-left p-4 border-2 transition-all pr-12 ${
+                      selectedBasket?.id === b.id
+                        ? "border-orange-500 bg-orange-50 shadow-[4px_4px_0px_0px_rgba(249,115,22,0.1)]"
+                        : "border-gray-100 bg-white hover:border-gray-300"
+                    }`}
+                  >
+                    <p className="font-black text-xs text-gray-900 uppercase tracking-tight truncate">
+                      {b.title}
+                    </p>
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter mt-1">
+                      ID: {b.id}
+                    </p>
+                  </button>
+
+                  {/* DELETE BUTTON */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent selecting the basket
+                      setBasketToDelete(b);
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-300 hover:text-red-600 transition-colors"
+                    title="Delete Draft"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="square"
+                        strokeLinejoin="miter"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
               ))
             )}
           </div>
         )}
       </div>
 
-      {/* RIGHT COLUMN: Action Area */}
+      {/* RIGHT COLUMN: Action Area remains same as previous step */}
       <div className="lg:col-span-2">
         {selectedBasket ? (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Header with Submit Button */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-900 text-white p-5 gap-4">
               <div>
                 <p className="text-[9px] font-black text-orange-500 uppercase tracking-widest mb-1">
@@ -236,7 +301,7 @@ export default function AddItems() {
                 </h3>
               </div>
               <button
-                onClick={handleOpenConfirmModal}
+                onClick={() => setShowConfirmModal(true)}
                 disabled={isActionLoading}
                 className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all disabled:bg-gray-700"
               >
@@ -244,7 +309,6 @@ export default function AddItems() {
               </button>
             </div>
 
-            {/* Form Body */}
             <div className="bg-white p-5 sm:p-8 border-x-2 border-b-2 border-gray-300 shadow-sm space-y-6">
               <form
                 onSubmit={handleAddItem}
@@ -252,7 +316,7 @@ export default function AddItems() {
               >
                 <div className="sm:col-span-2">
                   <input
-                    className="w-full p-4 border-2 border-gray-300 focus:border-orange-500 outline-none text-xs font-bold uppercase"
+                    className="w-full p-4 border-2 border-gray-100 focus:border-orange-500 outline-none text-xs font-bold uppercase"
                     placeholder="Item Name"
                     value={formData.title}
                     onChange={(e) =>
@@ -263,8 +327,8 @@ export default function AddItems() {
                 </div>
                 <div className="sm:col-span-2">
                   <textarea
-                    className="w-full p-4 border-2 border-gray-300 focus:border-orange-500 outline-none text-xs font-bold uppercase"
-                    placeholder="Description (Minimum 10 chars)"
+                    className="w-full p-4 border-2 border-gray-100 focus:border-orange-500 outline-none text-xs font-bold uppercase"
+                    placeholder="Description (Min 10 chars)"
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
@@ -275,7 +339,7 @@ export default function AddItems() {
                 </div>
                 <input
                   type="number"
-                  className="p-4 border-2 border-gray-300 focus:border-orange-500 outline-none text-xs font-bold uppercase"
+                  className="p-4 border-2 border-gray-100 focus:border-orange-500 outline-none text-xs font-bold uppercase"
                   placeholder="Qty"
                   value={formData.quantity}
                   onChange={(e) =>
@@ -288,7 +352,7 @@ export default function AddItems() {
                 />
                 <input
                   type="date"
-                  className="p-4 border-2 border-gray-300 focus:border-orange-500 outline-none text-xs font-bold"
+                  className="p-4 border-2 border-gray-100 focus:border-orange-500 outline-none text-xs font-bold"
                   value={formData.targetDate}
                   onChange={(e) =>
                     setFormData({ ...formData, targetDate: e.target.value })
@@ -321,10 +385,10 @@ export default function AddItems() {
               </form>
             </div>
 
-            {/* Existing Items List */}
+            {/* Existing Manifest List */}
             <div className="mt-10">
               <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center">
-                Basket Manifest
+                Basket Manifest{" "}
                 <span className="ml-3 px-2 py-0.5 bg-gray-100 text-gray-900">
                   {basketItems.length} Items
                 </span>
@@ -354,7 +418,7 @@ export default function AddItems() {
             </div>
           </div>
         ) : (
-          <div className="h-full min-h-[300px] flex flex-col items-center justify-center border-4 border-dashed border-gray-300 text-gray-300 bg-gray-50/30 p-10 text-center">
+          <div className="h-full min-h-[300px] flex flex-col items-center justify-center border-4 border-dashed border-gray-100 text-gray-300 bg-gray-50/30 p-10 text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.3em]">
               Select a container to manage items
             </p>

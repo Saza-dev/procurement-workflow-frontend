@@ -34,6 +34,7 @@ export const api = {
       itemsToMove: { itemId: number; quantity: number }[];
     }) => apiClient.post("/basket/split", data),
     viewAllHistory: () => apiClient.get("/basket/view-all"),
+    deleteBasket: (id: string) => apiClient.delete(`/basket/delete/${id}`),
   },
 
   // --- ITEMS ---

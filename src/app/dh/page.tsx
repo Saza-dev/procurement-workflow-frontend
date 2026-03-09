@@ -62,7 +62,7 @@ export default function DashboardDH() {
         {/* TOP HEADER: Clean and Sharp */}
         <header className="sticky top-0 lg:static z-30 bg-white/80 backdrop-blur-md border-b-2 border-gray-100 px-4 py-4 sm:px-8 sm:py-6 flex justify-between items-center">
           <div>
-            <h1 className="text-xl sm:text-3xl font-black text-gray-900 uppercase tracking-tighter">
+            <h1 className="text-xl sm:text-3xl font-black/20 text-gray-900 uppercase tracking-tighter">
               {activeView}
             </h1>
             <div className="h-1 w-12 bg-orange-500 mt-1"></div>
