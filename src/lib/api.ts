@@ -45,13 +45,10 @@ export const api = {
       apiClient.post(`/items/add/${basketId}`, data),
     warehouseCheck: (data: { itemId: number; inWarehouse: boolean }) =>
       apiClient.post("/items/warehouse", data),
-    addQuotation: (data: { itemId: number; price: number; quoteUrl: string }) =>
-      apiClient.post("/items/add-quotation", data),
-    updateInvoice: (data: {
-      itemId: number;
-      invoiceNumber: string;
-      invoiceUrl: string;
-    }) => apiClient.post("/items/add-invoice", data),
+    addQuotation: (formData: FormData) =>
+      apiClient.post("/items/add-quotation", formData),
+    addInvoice: (formData: FormData) =>
+      apiClient.post("/items/add-invoice", formData),
     addTag: (itemId: number) => apiClient.post("/items/tag", { itemId }),
     markDamaged: (data: { itemId: number; damagedQuantity: number }) =>
       apiClient.post("/items/mark-damaged", data),
