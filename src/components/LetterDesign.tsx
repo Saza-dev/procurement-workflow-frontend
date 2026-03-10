@@ -6,7 +6,7 @@ import { useState } from "react";
 function LetterDesign(l: { letter: string }) {
   const [pos, setPos] = useState({ x: 0, y: 0, rotate: 0 });
 
-  const handleMove = (e) => {
+  const handleMove = (e:any) => {
     const rect = e.currentTarget.getBoundingClientRect();
 
     const centerX = rect.left + rect.width / 2;
