@@ -10,6 +10,7 @@ import TrackRequests from "@/components/dh/TrackRequest";
 import Arrivals from "@/components/dh/Arrivals";
 import DamageReport from "@/components/dh/DamageReport";
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import ChatSupport from "@/components/ChatSupport";
 
 interface NavItem {
   name: string;
@@ -80,6 +81,7 @@ export default function DashboardDH() {
             <div className="max-w-7xl mx-auto">{renderContent()}</div>
           </div>
         </main>
+        <ChatSupport />
       </div>
     </RoleGuard>
   );

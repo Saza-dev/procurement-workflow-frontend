@@ -67,6 +67,11 @@ export const api = {
     decision: (basketId: number, status: string, comment: string) =>
       apiClient.post(`approval/decision`, { basketId, status, comment }),
   },
+
+  chat: {
+    response: (data: { query: string; context: any; chatHistory: any[] }) =>
+      apiClient.post("/chat", data),
+  },
 };
 
 // 4. Global Error Handler Helper

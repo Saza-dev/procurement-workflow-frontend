@@ -9,6 +9,7 @@ import ApprovedBaskets from "@/components/procurement/ApprovedBaskets";
 import RejectedBaskets from "@/components/procurement/RejectedBaskets";
 import Damaged from "@/components/procurement/Damaged";
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import ChatSupport from "@/components/ChatSupport";
 
 interface NavItem {
   name: string;
@@ -78,6 +79,7 @@ export default function DashboardPE() {
             <div className="max-w-7xl mx-auto">{renderContent()}</div>
           </div>
         </main>
+        <ChatSupport />
       </div>
     </RoleGuard>
   );

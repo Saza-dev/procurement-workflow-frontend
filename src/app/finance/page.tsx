@@ -7,6 +7,7 @@ import ProfilePage from "@/components/profile/ProfilePage";
 import PendingApprovals from "@/components/approval/PendingApprovals";
 import History from "@/components/hr/History";
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import ChatSupport from "@/components/ChatSupport";
 
 interface NavItem {
   name: string;
@@ -68,6 +69,7 @@ export default function DashboardPE() {
             <div className="max-w-7xl mx-auto">{renderContent()}</div>
           </div>
         </main>
+                <ChatSupport />
       </div>
     </RoleGuard>
   );

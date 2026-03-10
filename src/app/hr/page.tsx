@@ -6,6 +6,7 @@ import LogoutButton from "@/components/layout/LogoutButton";
 import Arrivals from "@/components/hr/Arrivals";
 import History from "@/components/hr/History";
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import ChatSupport from "@/components/ChatSupport";
 
 interface NavItem {
   name: string;
@@ -61,6 +62,7 @@ export default function DashboardDH() {
             <div className="max-w-7xl mx-auto">{renderContent()}</div>
           </div>
         </main>
+                <ChatSupport />
       </div>
     </RoleGuard>
   );
